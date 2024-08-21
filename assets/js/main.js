@@ -178,37 +178,35 @@
   document.addEventListener('scroll', navmenuScrollspy);
 
 
-  let submit = document.querySelector('#btnSubmit');
-
-
-  submit.addEventListener('click', (e) => {
-    e.preventDefault();
-      debugger;
-      var name = $('#name').val();
-      var email = $('#email').val();
-      var subject = $('#subject').val();
-      var message = $('#message').val();
-      debugger;
-    $.ajax({
-      cache: false,
-      type: "POST",
-      url: "/EmailManagementController/SubmitEmail",
-      //url: '@Url.Action("SubmitEmail", "EmailManagementController")',
-      data: {
-         'Name': name,
-         'Email': email,
-         'Subject': subject,
-         'Message': message,
-        },
-      success: function () {
-        alert('success!')
-      },
-      error: function () {
-        alert('Error');
-      }
+  // let submit = document.querySelector('#btnSubmit');
+  // submit.addEventListener('click', (e) => {
+  //   e.preventDefault();
+  //     debugger;
+  //     var name = $('#name').val();
+  //     var email = $('#email').val();
+  //     var subject = $('#subject').val();
+  //     var message = $('#message').val();
+  //     debugger;
+  //   $.ajax({
+  //     cache: false,
+  //     type: "POST",
+  //     url: "/EmailManagementController/SubmitEmail",
+  //     //url: '@Url.Action("SubmitEmail", "EmailManagementController")',
+  //     data: {
+  //        'Name': name,
+  //        'Email': email,
+  //        'Subject': subject,
+  //        'Message': message,
+  //       },
+  //     success: function () {
+  //       alert('success!')
+  //     },
+  //     error: function () {
+  //       alert('Error');
+  //     }
   
-  });
+  // });
 
-  });
+  // });
 
 })();
