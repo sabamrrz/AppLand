@@ -5,7 +5,7 @@
 */
 (function () {
   "use strict";
-
+debugger;
   let forms = document.querySelectorAll('.php-email-form');
 
   forms.forEach( function(e) {
@@ -50,6 +50,7 @@
   });
 
   function php_email_form_submit(thisForm, action, formData) {
+    debugger;
     fetch(action, {
       method: 'POST',
       body: formData,
@@ -72,6 +73,7 @@
       }
     })
     .catch((error) => {
+      console.log(error);
       displayError(thisForm, error);
     });
   }

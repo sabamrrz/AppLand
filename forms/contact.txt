@@ -1,0 +1,58 @@
+<?php
+
+header("Access-Control-Allow-Origin: *"); // مجاز کردن دسترسی از تمام دامنه‌ها
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // مجاز کردن متدهای POST و GET
+header("Access-Control-Allow-Headers: Content-Type"); // مجاز کردن هدرهای خاص
+
+// بارگذاری فایل‌های کلاس PHPMailer
+require 'vendor/phpmailer/src/Exception.php';
+require 'vendor/phpmailer/src/PHPMailer.php';
+require 'vendor/phpmailer/src/SMTP.php';
+
+// استفاده از فضای نام‌های PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
+
+    $mail = new PHPMailer(true);
+
+    try {
+        // تنظیمات سرور SMTP
+        $mail->isSMTP();
+        $mail->Host = 'mail.codebanoo.org'; // آدرس سرور SMTP
+        $mail->SMTPAuth = true;
+        $mail->Username = 'saba@codebanoo.org'; // ایمیل شما
+        $mail->Password = 'Password'; // رمز عبور ایمیل
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // رمزنگاری
+        $mail->Port = 587; // پورت سرور SMTP (یا 465 برای SSL)
+
+        // اطلاعات ارسال‌کننده و گیرنده
+        $mail->setFrom('saba@codebanoo.org', 'Saba');
+        $mail->addAddress('saba@codebanoo.org'); // گیرنده ایمیل
+        // می‌توانید چندین گیرنده اضافه کنید:
+        // $mail->addAddress('another@example.com');
+
+        // تنظیمات محتوای ایمیل
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = "
+            <h2>پیام جدید از فرم تماس</h2>
+            <p><strong>نام:</strong> {$name}</p>
+            <p><strong>ایمیل:</strong> {$email}</p>
+            <p><strong>پیام:</strong><br>{$message}</p>
+        ";
+        $mail->AltBody = "نام: {$name}\nایمیل: {$email}\nپیام:\n{$message}"; // متن ساده
+
+        // ارسال ایمیل
+        $mail->send();
+        echo "پیام شما با موفقیت ارسال شد!";
+    } catch (Exception $e) {
+        echo "خطا در ارسال ایمیل: {$mail->ErrorInfo}";
+    }
+}
+?>

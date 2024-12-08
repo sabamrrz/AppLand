@@ -1,42 +1,62 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
-  // Replace contact@example.com with your real receiving email address
-  // $receiving_email_address = 'contact@example.com';
-  $receiving_email_address = 'info@codebanoo.org';
+// بارگذاری خودکار Composer
+require '../vendor/autoload.php';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // دریافت اطلاعات فرم
+    $name = $_POST['name'] ?? 'name';
+    $email = $_POST['email'] ?? 'email';
+    $subject = $_POST['subject'] ?? 'subject';
+    $message = $_POST['message'] ?? 'message';
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+    $mail = new PHPMailer(true);
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
+    try {
+        // تنظیمات SMTP هاست
+        $mail->isSMTP();
+        $mail->Host = 'mail.codebanoo.org'; // آدرس سرور SMTP هاست شما
+        $mail->SMTPAuth = true;
+        $mail->Username = 'saba@codebanoo.org'; // ایمیل شما در هاست
+        $mail->Password = 'codE@6080'; // رمز عبور ایمیل شما
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // یا PHPMailer::ENCRYPTION_SMTPS برای پورت 465
+        $mail->Port = 587; // پورت TLS (یا 465 برای SMTPS)
 
-  echo $contact->send();
+        // تنظیمات ارسال‌کننده و گیرنده
+        $mail->setFrom('saba@codebanoo.org', 'Saba'); // ایمیل فرستنده
+        $mail->addAddress('saba@codebanoo.org'); // گیرنده ایمیل
+
+        // تنظیمات محتوا
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = "
+            <h2>New message</h2>
+            <p><strong>name:</strong> {$name}</p>
+            <p><strong>email:</strong> {$email}</p>
+            <p><strong>message:</strong><br>{$message}</p>
+        ";
+        $mail->AltBody = "name: {$name}\n email: {$email}\n message:\n{$message}";
+
+        // ارسال ایمیل
+        $mail->send();
+        $isSuccessful = true; // فرض می‌کنیم که ارسال موفقیت‌آمیز بوده است
+        if ($isSuccessful) {
+            // مخفی کردن پیام خطا و نمایش پیام موفقیت
+            echo "OK"; // ارسال موفقیت‌آمیز
+        } else {
+            // در صورتی که پیام خطا باشد
+            echo '<div class="error-message" style="color: white; background-color: red; padding: 10px; border-radius: 5px; text-align: center;">Error: Something went wrong.</div>';
+        }
+        
+        
+    } catch (Exception $e) {
+        echo "Error: {$mail->ErrorInfo}";
+    }
+}
 ?>
